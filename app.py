@@ -1,3 +1,4 @@
+
 import os
 import time
 import streamlit as st
@@ -10,7 +11,7 @@ st.title("🎬 AI Video Prompt Extractor")
 st.write("Upload a video and automatically generate a detailed master prompt using AI!")
 
 # Configured API Key
-API_KEY = "AQ.Ab8RN6IP0YOsITVVbFDePNDc-ywtNqt8ANK6vfVtr085cDlStA"
+API_KEY = "AQ.Ab8RN6KGCgeoH3j1CDpYmNB-GlUkxVG2Lg-sWddpLYYbWMxOyw"
 
 if not API_KEY:
     st.error("Please provide a valid Gemini API Key.")
