@@ -1,4 +1,3 @@
-
 import os
 import time
 import streamlit as st
@@ -10,11 +9,11 @@ st.set_page_config(page_title="AI Video Prompt Extractor", page_icon="🎬", lay
 st.title("🎬 AI Video Prompt Extractor")
 st.write("Upload a video and automatically generate a detailed master prompt using AI!")
 
-# Configured API Key
-API_KEY = "AQ.Ab8RN6KGCgeoH3j1CDpYmNB-GlUkxVG2Lg-sWddpLYYbWMxOyw"
+# Input API Key directly from UI to avoid caching issues
+API_KEY = st.text_input("Enter your Google Gemini API Key:", type="password")
 
 if not API_KEY:
-    st.error("Please provide a valid Gemini API Key.")
+    st.info("Please enter your Gemini API Key above to start.")
 else:
     genai.configure(api_key=API_KEY)
     
