@@ -1,4 +1,5 @@
 import os
+import time
 import streamlit as st
 import google.generativeai as genai
 
@@ -20,18 +21,32 @@ else:
     uploaded_file = st.file_uploader("Upload a video file (MP4, MOV, AVI)", type=["mp4", "mov", "avi"])
 
     if uploaded_file is not None:
-        # Display Video Preview
+        # Show file details (Name and Size)
+        file_details = {"File Name": uploaded_file.name, "File Size": f"{uploaded_file.size / (1024 * 1024):.2f} MB"}
+        st.write("📁 **File Details:**")
+        st.json(file_details)
+
+        # Simulated Upload Progress Bar for better UX
+        progress_bar = st.progress(0)
+        status_text = st.empty()
+        
+        for percent_complete in range(100):
+            time.sleep(0.01)
+            progress_bar.progress(percent_complete + 1)
+            status_text.text(f"Uploading... {percent_complete + 1}%")
+            
+        status_text.text("Upload Complete!")
         st.video(uploaded_file)
         
         if st.button("EXTRACT MASTER PROMPT"):
-            with st.spinner("Analyzing video, please wait..."):
+            with st.spinner("Analyzing video with Gemini, please wait..."):
                 try:
                     # Save uploaded file temporarily
                     video_path = "temp_video.mp4"
                     with open(video_path, "wb") as f:
                         f.write(uploaded_file.getbuffer())
 
-                    st.write("Processing file...")
+                    st.write("Processing file with AI...")
                     video_file = genai.upload_file(path=video_path)
 
                     # Call Gemini Model
