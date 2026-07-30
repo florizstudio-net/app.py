@@ -2,31 +2,39 @@ import os
 import streamlit as st
 import google.generativeai as genai
 
+# Page Configuration
 st.set_page_config(page_title="AI Video Prompt Extractor", page_icon="🎬", layout="centered")
 
 st.title("🎬 AI Video Prompt Extractor")
-st.write("একটি ভিডিও আপলোড করুন এবং এআই-এর সাহায্যে তার মাস্টার প্রম্পট তৈরি করে নিন!")
+st.write("Upload a video and automatically generate a detailed master prompt using AI!")
 
-api_key = st.text_input("আপনার Google Gemini API Key দিন:", type="password")
+# Configured API Key
+API_KEY = "AQ.Ab8RN6IP0YOsITVVbFDePNDc-ywtNqt8ANK6vfVtr085cDlStA"
 
-if api_key:
-    genai.configure(api_key=api_key)
+if not API_KEY:
+    st.error("Please provide a valid Gemini API Key.")
+else:
+    genai.configure(api_key=API_KEY)
     
-    uploaded_file = st.file_uploader("একটি ভিডিও ফাইল আপলোড করুন (MP4, MOV ইত্যাদি)", type=["mp4", "mov", "avi"])
+    # Video Uploader Section
+    uploaded_file = st.file_uploader("Upload a video file (MP4, MOV, AVI)", type=["mp4", "mov", "avi"])
 
     if uploaded_file is not None:
+        # Display Video Preview
         st.video(uploaded_file)
         
         if st.button("EXTRACT MASTER PROMPT"):
-            with st.spinner("ভিডিও অ্যানালাইজ করা হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন..."):
+            with st.spinner("Analyzing video, please wait..."):
                 try:
+                    # Save uploaded file temporarily
                     video_path = "temp_video.mp4"
                     with open(video_path, "wb") as f:
                         f.write(uploaded_file.getbuffer())
 
-                    st.write("ফাইল প্রসেস হচ্ছে...")
+                    st.write("Processing file...")
                     video_file = genai.upload_file(path=video_path)
 
+                    # Call Gemini Model
                     model = genai.GenerativeModel(model_name="gemini-1.5-pro-latest")
                     
                     prompt = """
@@ -38,15 +46,14 @@ if api_key:
 
                     response = model.generate_content([video_file, prompt])
 
-                    st.success("সফলভাবে মাস্টার প্রম্পট তৈরি হয়েছে!")
-                    st.subheader("আপনার মাস্টার প্রম্পট:")
+                    # Display Generated Prompt
+                    st.success("Master Prompt generated successfully!")
+                    st.subheader("Your Master Prompt:")
                     st.code(response.text, language="markdown")
 
+                    # Remove temporary file
                     if os.path.exists(video_path):
                         os.remove(video_path)
 
                 except Exception as e:
-                    st.error(e)
-else:
-    st.info("টুলটি ব্যবহার করতে প্রথমে ওপরে আপনার Gemini API Key দিন।")
-  
+                    st.error(f"An error occurred: {e}")
